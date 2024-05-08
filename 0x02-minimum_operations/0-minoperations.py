@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 This module defines a function minOperations that computes the
 minimum number of "Copy All" and "Paste" operations needed
