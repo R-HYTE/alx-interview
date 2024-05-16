@@ -53,15 +53,15 @@ The number of occurrences of each status code (200, 301, 400, 401, 403, 404, 405
 
 ### Example output:
 
-Total file size: File size: 11320
-200: 3
-301: 2
-400: 1
-401: 2
-403: 3
-404: 4
-405: 2
-500: 3
+Total file size: File size: 11320\
+200: 3\
+301: 2\
+400: 1\
+401: 2\
+403: 3\
+404: 4\
+405: 2\
+500: 3\
 
 ## Handling Interruptions
 
