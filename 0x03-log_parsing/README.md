@@ -61,7 +61,7 @@ Total file size: File size: 11320\
 403: 3\
 404: 4\
 405: 2\
-500: 3\
+500: 3
 
 ## Handling Interruptions
 
