@@ -32,15 +32,15 @@ if (process.argv.length > 2) {
       return new Promise((resolve, reject) => {
         request(url, (requestErr, response, characterBody) => {
           if (requestErr) {
-            reject(`Error fetching character data: ${requestErr}`);
+            reject(new Error(`Error fetching character data: ${requestErr}`));
           } else if (response.statusCode !== 200) {
-            reject(`Failed to fetch character data, HTTP Status Code: ${response.statusCode}`);
+            reject(new Error(`Failed to fetch character data, HTTP Status Code: ${response.statusCode}`));
           } else {
             try {
               const characterData = JSON.parse(characterBody);
               resolve(characterData.name);
             } catch (parseErr) {
-              reject(`Error parsing character data: ${parseErr}`);
+              reject(new Error(`Error parsing character data: ${parseErr}`));
             }
           }
         });
@@ -57,6 +57,6 @@ if (process.argv.length > 2) {
       });
   });
 } else {
-  console.error("Error: Movie ID argument is required.");
+  console.error('Error: Movie ID argument is required.');
   process.exit(1);
 }
