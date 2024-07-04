@@ -5,6 +5,7 @@ played between Maria and Ben. The game involves selecting prime numbers and
 removing their multiples from a set of consecutive integers.
 """
 
+
 def isWinner(x, nums):
     """
     Determines the winner after x rounds of the game.
