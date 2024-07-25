@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 """
-Parses HTTP request logs from stdin and computes metrics.
+Reads stdin line by line and computes metrics for HTTP request logs.
 
 Metrics include:
 - Total file size of all requests.
-- Counts of specific HTTP status codes (200, 301, 400, 401, 403, 404,
-  405, 500).
+- Counts of specific HTTP status codes (200, 301, 400, 401, 403, 404, 405, 500).
 
 Prints statistics every 10 lines or upon keyboard interrupt (Ctrl+C) or
 end of input (EOF). Lines not matching the expected format are skipped.
@@ -17,39 +16,42 @@ import sys
 
 def extract_input(input_line):
     """
-    Extracts 'status_code' and 'file_size' from a log line.
+    Extracts the status code and file size from a log line.
 
     Args:
-        input_line (str): Log line.
+        input_line (str): A line of HTTP request log.
 
     Returns:
-        dict: Contains 'status_code' and 'file_size'.
+        dict: Contains 'status_code' and 'file_size'. Defaults to 0 if not present.
     """
-    log_fmt = (
-        r'(?P<ip>\S+) - \[(?P<date>.+?)\] '
-        r'"(?P<request>.+?)" (?P<status_code>\d{3}) '
-        r'(?P<file_size>\d+)'
+    fp = (
+        r'\s*(?P<ip>\S+)\s*',
+        r'\s*\[(?P<date>\d+-\d+-\d+ \d+:\d+:\d+\.\d+)\]',
+        r'\s*"(?P<request>[^"]*)"\s*',
+        r'\s*(?P<status_code>\S+)',
+        r'\s*(?P<file_size>\d+)'
     )
     info = {
         'status_code': '0',
         'file_size': 0,
     }
-    resp_match = re.match(log_fmt, input_line)
-    if resp_match:
-        info['status_code'] = resp_match.group('status_code')
-        info['file_size'] = int(resp_match.group('file_size'))
-    else:
-        print(f"Line skipped: {input_line}")
+    log_fmt = f'{fp[0]}-{fp[1]}{fp[2]}{fp[3]}{fp[4]}\\s*'
+    resp_match = re.fullmatch(log_fmt, input_line)
+    if resp_match is not None:
+        status_code = resp_match.group('status_code')
+        file_size = int(resp_match.group('file_size'))
+        info['status_code'] = status_code
+        info['file_size'] = file_size
     return info
 
 
 def print_statistics(total_file_size, status_codes_stats):
     """
-    Prints total file size and status code counts.
+    Prints the accumulated statistics of the HTTP request log.
 
     Args:
-        total_file_size (int): Total file size.
-        status_codes_stats (dict): Counts of each status code.
+        total_file_size (int): Total accumulated file size.
+        status_codes_stats (dict): Dictionary with counts of each status code.
     """
     print(f'File size: {total_file_size}', flush=True)
     for status_code in sorted(status_codes_stats.keys()):
@@ -60,12 +62,12 @@ def print_statistics(total_file_size, status_codes_stats):
 
 def update_metrics(line, total_file_size, status_codes_stats):
     """
-    Updates metrics with data from a log line.
+    Updates the metrics based on a new log line.
 
     Args:
-        line (str): Log line.
+        line (str): The log line to process.
         total_file_size (int): Current total file size.
-        status_codes_stats (dict): Current status code counts.
+        status_codes_stats (dict): Dictionary with current status code counts.
 
     Returns:
         int: Updated total file size.
@@ -79,7 +81,7 @@ def update_metrics(line, total_file_size, status_codes_stats):
 
 def run():
     """
-    Reads from stdin, processes lines, and prints metrics.
+    Starts the log parser, reading from stdin and processing lines.
     """
     line_num = 0
     total_file_size = 0
@@ -95,11 +97,10 @@ def run():
     }
     try:
         while True:
-            line = sys.stdin.readline().strip()
-            if not line:
-                break
+            line = input()
             total_file_size = update_metrics(
-                line, total_file_size, status_codes_stats)
+                line, total_file_size, status_codes_stats
+            )
             line_num += 1
             if line_num % 10 == 0:
                 print_statistics(total_file_size, status_codes_stats)
