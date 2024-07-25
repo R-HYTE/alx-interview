@@ -4,7 +4,8 @@ Reads stdin line by line and computes metrics for HTTP request logs.
 
 Metrics include:
 - Total file size of all requests.
-- Counts of specific HTTP status codes (200, 301, 400, 401, 403, 404, 405, 500).
+- Counts of specific HTTP status codes
+(200, 301, 400, 401, 403, 404, 405, 500).
 
 Prints statistics every 10 lines or upon keyboard interrupt (Ctrl+C) or
 end of input (EOF). Lines not matching the expected format are skipped.
@@ -22,7 +23,8 @@ def extract_input(input_line):
         input_line (str): A line of HTTP request log.
 
     Returns:
-        dict: Contains 'status_code' and 'file_size'. Defaults to 0 if not present.
+        dict: Contains 'status_code' and 'file_size'.
+        Defaults to 0 if not present.
     """
     fp = (
         r'\s*(?P<ip>\S+)\s*',
