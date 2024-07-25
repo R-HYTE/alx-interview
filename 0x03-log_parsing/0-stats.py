@@ -14,7 +14,6 @@ end of input (EOF). Lines not matching the expected format are skipped.
 import re
 import sys
 
-
 def extract_input(input_line):
     """
     Extracts 'status_code' and 'file_size' from a log line.
@@ -23,7 +22,8 @@ def extract_input(input_line):
         input_line (str): Log line.
 
     Returns:
-        dict: Contains 'status_code' and 'file_size'.
+        dict: Contains 'status_code' and 'file_size'. 
+              Default values are '0' for status_code and 0 for file_size.
     """
     log_fmt = (r'(?P<ip>\d+\.\d+\.\d+\.\d+) - \[(?P<date>.+?)\] '
                r'"(?P<request>.+?)" (?P<status_code>\d{3}) '
@@ -37,9 +37,9 @@ def extract_input(input_line):
         info['status_code'] = resp_match.group('status_code')
         info['file_size'] = int(resp_match.group('file_size'))
     else:
-        print(f"Line skipped: {input_line}")
+        # Ensure that skipped lines are noted but do not affect metrics.
+        print(f"Line skipped: {input_line}", file=sys.stderr)
     return info
-
 
 def print_statistics(total_file_size, status_codes_stats):
     """
@@ -54,7 +54,6 @@ def print_statistics(total_file_size, status_codes_stats):
         count = status_codes_stats[status_code]
         if count > 0:
             print(f'{status_code}: {count}')
-
 
 def update_metrics(line, total_file_size, status_codes_stats):
     """
@@ -73,7 +72,6 @@ def update_metrics(line, total_file_size, status_codes_stats):
     if status_code in status_codes_stats:
         status_codes_stats[status_code] += 1
     return total_file_size + line_info['file_size']
-
 
 def run():
     """
@@ -104,7 +102,6 @@ def run():
     except (KeyboardInterrupt, EOFError):
         print_statistics(total_file_size, status_codes_stats)
         sys.exit(0)
-
 
 if __name__ == '__main__':
     run()
