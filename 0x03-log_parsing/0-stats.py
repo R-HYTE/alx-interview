@@ -25,9 +25,11 @@ def extract_input(input_line):
     Returns:
         dict: Contains 'status_code' and 'file_size'.
     """
-    log_fmt = (r'(?P<ip>\d+\.\d+\.\d+\.\d+) - \[(?P<date>.+?)\] '
-               r'"(?P<request>.+?)" (?P<status_code>\d{3}) '
-               r'(?P<file_size>\d+)')
+    log_fmt = (
+        r'(?P<ip>\S+) - \[(?P<date>.+?)\] '
+        r'"(?P<request>.+?)" (?P<status_code>\d{3}) '
+        r'(?P<file_size>\d+)'
+    )
     info = {
         'status_code': '0',
         'file_size': 0,
@@ -37,7 +39,7 @@ def extract_input(input_line):
         info['status_code'] = resp_match.group('status_code')
         info['file_size'] = int(resp_match.group('file_size'))
     else:
-        print(f"Line skipped: {input_line}", file=sys.stderr)
+        print(f"Line skipped: {input_line}")
     return info
 
 
@@ -49,11 +51,11 @@ def print_statistics(total_file_size, status_codes_stats):
         total_file_size (int): Total file size.
         status_codes_stats (dict): Counts of each status code.
     """
-    print(f'File size: {total_file_size}')
+    print(f'File size: {total_file_size}', flush=True)
     for status_code in sorted(status_codes_stats.keys()):
         count = status_codes_stats[status_code]
         if count > 0:
-            print(f'{status_code}: {count}')
+            print(f'{status_code}: {count}', flush=True)
 
 
 def update_metrics(line, total_file_size, status_codes_stats):
@@ -92,10 +94,10 @@ def run():
         '500': 0,
     }
     try:
-        for line in sys.stdin:
-            line = line.strip()
+        while True:
+            line = sys.stdin.readline().strip()
             if not line:
-                continue
+                break
             total_file_size = update_metrics(
                 line, total_file_size, status_codes_stats)
             line_num += 1
